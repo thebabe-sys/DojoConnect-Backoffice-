@@ -6,7 +6,13 @@ import MainLayout from '../../../../../components/Dashboard/MainLayout';
 import Pagination from '../../../../../components/users/Pagination';
 import UsersTable from '../../../../../components/users/UsersTable';
 
-const cardMeta = {
+type CardMetaItem = {
+  title: string;
+  breadcrumb: string;
+  role?: string | string[];
+};
+
+const cardMeta: Record<string, CardMetaItem> = {
   adminCount: { title: "Dojo Admins", breadcrumb: "Dojo Admins", role: "admin" },
   instructorCount: { title: "Instructors", breadcrumb: "Instructors", role: "instructor" },
   parentCount: { title: "Parents", breadcrumb: "Parents", role: "parent" },
@@ -145,4 +151,5 @@ export default function CardSummaryPage() {
         </div>
       </div>
     </MainLayout>
-  );
+    );
+  }
