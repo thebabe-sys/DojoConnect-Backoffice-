@@ -102,13 +102,16 @@ export default function ClassDetailPage() {
           onBack={() => router.push('/dashboard?tab=classes')}
         />
 
-        <ProfileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+        <ProfileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} 
+        />
 
         <div className="mt-8">
           {activeTab === "Class Info" && <ClassOverview profile={profile} />}
           {activeTab === "Enrolled Student" && (
             <>
-              <EnrolledStudentsTable students={profile.enrolled_students} />
+              <EnrolledStudentsTable students={profile.enrolled_students} 
+              classId={id}
+              />
               <Pagination
                 totalRows={profile.enrolled_students?.length || 0}
                 rowsPerPage={rowsPerPage}

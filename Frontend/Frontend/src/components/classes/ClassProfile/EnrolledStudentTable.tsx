@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { students } from "./studentData";
 import { FaEllipsisV } from "react-icons/fa";
 
 // Export Modal for enrollments
