@@ -240,36 +240,43 @@ export default function PaymentHistory({ filter, customRange }: PaymentHistoryPr
               <th className="py-3 px-4 text-left text-black font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody>
-            {loading ? (
-              <tr>
-                <td colSpan={5} className="py-8 text-center text-gray-400">
-                  Loading...
-                </td>
-              </tr>
-            ) : rows.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-8 text-center text-gray-400">
-                  No payment history found.
-                </td>
-              </tr>
-            ) : (
-              rows.map((row, idx) => (
-                <tr key={idx} className="border-t border-gray-200">
-                  <td className="py-3 px-4 text-gray-600">{row.dojo}</td>
-                  <td className="py-3 px-4 text-gray-600">{row.plan}</td>
-                  <td className="py-3 px-4 text-gray-600">{row.amount}</td>
-                  <td className="py-3 px-4 text-gray-600">{row.date}</td>
-                  <td className="py-3 px-4 text-gray-600">
-                    <span className="flex items-center gap-2">
-                      <span className={`h-2 w-2 rounded-full ${row.statusColor}`}></span>
-                      <span>{row.status}</span>
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
+      <tbody>
+  {(loading || rows.length === 0) ? (
+    <tr>
+      <td
+        colSpan={5}
+        className="py-8 min-h-[300px] text-center align-middle"
+        style={{ height: 320, padding: 0 }}
+      >
+        <div className="flex flex-col items-center justify-center w-full h-full">
+          <img
+            src="/illustration.png"
+            alt="No payment history"
+            className="w-48 h-48 mb-6 opacity-80"
+          />
+          <span className="text-gray-400 font-bold text-base">
+            No payment history found.
+          </span>
+        </div>
+      </td>
+    </tr>
+  ) : (
+    rows.map((row, idx) => (
+      <tr key={idx} className="border-t border-gray-200">
+        <td className="py-3 px-4 text-gray-600">{row.dojo}</td>
+        <td className="py-3 px-4 text-gray-600">{row.plan}</td>
+        <td className="py-3 px-4 text-gray-600">{row.amount}</td>
+        <td className="py-3 px-4 text-gray-600">{row.date}</td>
+        <td className="py-3 px-4 text-gray-600">
+          <span className="flex items-center gap-2">
+            <span className={`h-2 w-2 rounded-full ${row.statusColor}`}></span>
+            <span>{row.status}</span>
+          </span>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
         </table>
       </div>
     </div>

@@ -20,11 +20,16 @@ interface ClassRow {
 
 interface ClassesTableProps {
   classes: ClassRow[];
+  loading: boolean;
   onClassClick?: (id: string | number) => void;
 }
 
-export default function ClassesTable({ classes, onClassClick }: ClassesTableProps) {
+const ClassesTable: React.FC<ClassesTableProps> = ({ classes, loading }) => {
   const router = useRouter();
+  function onClassClick(class_uid: string | number) {
+    router.push(`/dashboard/classes/${class_uid}`);
+  }
+
   return (
     <div className="rounded-lg border bg-white">
       <table className="min-w-full divide-y divide-gray-200">
@@ -85,3 +90,5 @@ export default function ClassesTable({ classes, onClassClick }: ClassesTableProp
     </div>
   );
 }
+
+export default ClassesTable;

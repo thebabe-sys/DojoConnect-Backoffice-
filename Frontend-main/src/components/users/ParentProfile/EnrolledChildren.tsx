@@ -1,7 +1,17 @@
 import { FaEllipsisV } from 'react-icons/fa';
 
 
-export default function EnrolledChildren({ childrenData }) {
+interface Child {
+  img: string;
+  name: string;
+  email: string;
+}
+
+interface EnrolledChildrenProps {
+  childrenData: Child[];
+}
+
+export default function EnrolledChildren({ childrenData }: EnrolledChildrenProps) {
   const hasChildren = childrenData.length > 0;
 
   return (

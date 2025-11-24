@@ -1,9 +1,11 @@
 import { FaCalendarAlt } from 'react-icons/fa';
 
-// Replace this with your real data source
-const classesData = []; // Example: [{ id: 1, className: 'Math', classLevel: 'Beginner', classImg: '/class1.jpg', instructor: { name: 'Mr. Smith' }, enrollmentDate: '2024-01-01', status: 'Active' }]
 
-export default function EnrolledClasses() {
+type EnrolledClassesProps = {
+  classesData: any[];
+};
+
+const EnrolledClasses: React.FC<EnrolledClassesProps> = ({ classesData }) => {
   const hasClasses = classesData.length > 0;
 
   return (
@@ -70,3 +72,4 @@ export default function EnrolledClasses() {
     </div>
   );
 }
+export default EnrolledClasses;

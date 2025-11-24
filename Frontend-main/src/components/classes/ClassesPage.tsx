@@ -70,7 +70,19 @@ export default function ClassesPage() {
 
       {/* Controls */}
       <SearchFilterExport />
-
+ {/* Empty State */}
+    {!loading && classesData.length === 0 ? (
+      <div className="flex flex-col items-center justify-center bg-white rounded-xl py-20 mb-6" style={{ border: "1px solid #E4E7EC" }}>
+        <img
+          src="/illustration.png"
+          alt="No classes"
+          className="w-[225px] h-[188px] mb-4"
+        />
+        <h2 className="text-2xl font-semibold text-[#303030]">Nothing here yet...</h2>
+        <p className="text-base text-[#9E9E9E] mt-3">Whoops ... there’s no class information available yet</p>
+      </div>
+    ) : (
+      <>
      {/* Table */}
       <div className="bg-white rounded-xl p-0 mb-6" style={{ border: "1px solid #E4E7EC" }}>
         <ClassesTable classes={pagedClasses} loading={loading} />
@@ -83,6 +95,8 @@ export default function ClassesPage() {
         currentPage={page}
         onPageChange={setPage}
       />
+      </>
+    )}
     </div>
   )
 }

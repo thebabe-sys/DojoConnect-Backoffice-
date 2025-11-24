@@ -49,8 +49,8 @@ export default function ParentProfilePage() {
       try {
         // Get email by id
         const reUsers = await fetch("https://www.backoffice-api.dojoconnect.app/get_users");
-        if (!resUsers.ok) throw new Error("Failed to fetch users");
-        const usersData = await resUsers.json();
+        if (!reUsers.ok) throw new Error("Failed to fetch users");
+        const usersData = await reUsers.json();
         const user = usersData.data.find((u: any) => String(u.id) === String(id));
         if (!user?.email) {
           setProfile(null);

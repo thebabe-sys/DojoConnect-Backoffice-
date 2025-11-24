@@ -1,19 +1,19 @@
 'use client'
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from 'next/navigation'
-import MainLayout from '../../../../../components/Dashboard/MainLayout'
-import ProfileHeader from "../../../../../components/users/AdminProfile/ProfileHeader"
-import ProfileTabs from "../../../../../components/users/AdminProfile/ProfileTabs"
-import ProfileOverview from "../../../../../components/users/AdminProfile/Overview"
-import InstructorsTab from "../../../../../components/users/AdminProfile/InstructorsTab"
-import ClassesTab from "../../../../../components/users/AdminProfile/ClassesTab"
-import ParentsTab from "../../../../../components/users/AdminProfile/ParentsTab"
-import StudentsTab from "../../../../../components/users/AdminProfile/StudentsTab"
-import SubscriptionTab from "../../../../../components/users/AdminProfile/SubscriptionTab"
-import SubscriptionSummary from "../../../../../components/users/AdminProfile/SubscriptionSummary"
-import PaymentMethod from "../../../../../components/users/AdminProfile/PaymentMethod";
-import ActivitiesTab from "../../../../../components/users/AdminProfile/ActivitiesTab" 
-import Calendar from "../../../../../components/users/AdminProfile/Calendar"
+import MainLayout from '@/components/Dashboard/MainLayout'
+import ProfileHeader from "@/components/users/AdminProfile/ProfileHeader"
+import ProfileTabs from "@/components/users/AdminProfile/ProfileTabs"
+import ProfileOverview from "@/components/users/AdminProfile/Overview"
+import InstructorsTab from "@/components/users/AdminProfile/InstructorsTab"
+import ClassesTab from "@/components/users/AdminProfile/ClassesTab"
+import ParentsTab from "@/components/users/AdminProfile/ParentsTab"
+import StudentsTab from "@/components/users/AdminProfile/StudentsTab"
+import SubscriptionTab from "@/components/users/AdminProfile/SubscriptionTab"
+import SubscriptionSummary from "@/components/users/AdminProfile/SubscriptionSummary"
+import PaymentMethod from "@/components/users/AdminProfile/PaymentMethod"
+import ActivitiesTab from "@/components/users/AdminProfile/ActivitiesTab" 
+import Calendar from "@/components/users/AdminProfile/Calendar"
 
 const tabs = [
   "Overview",

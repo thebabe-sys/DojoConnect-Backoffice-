@@ -24,7 +24,7 @@ type Tab = typeof tabs[number];
 export default function StudentProfilePage() {
   const params = useParams();
   const router = useRouter();
-  const id = params.id;
+  const id = params.id as string | string[] | undefined;
 
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +33,12 @@ export default function StudentProfilePage() {
   useEffect(() => {
     async function fetchProfile() {
       setLoading(true);
-      let email = await getEmailById(id);
+      if (!id) {
+  setProfile(null);
+  setLoading(false);
+  return;
+}
+let email = await getEmailById(id as string | string[]);
       if (!email) {
         setProfile(null);
         setLoading(false);
