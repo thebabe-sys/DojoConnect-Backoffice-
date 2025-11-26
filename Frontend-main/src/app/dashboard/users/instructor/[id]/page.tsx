@@ -2,12 +2,12 @@
 "use client"
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from 'next/navigation';
-import MainLayout from '../../../../../components/Dashboard/MainLayout';
-import Overview from '../../../../../components/users/InstructorProfile/Overview';
-import ProfileHeader from "../../../../../components/users/InstructorProfile/ProfileHeader";
-import ProfileTabs from "../../../../../components/users/InstructorProfile/ProfileTabs";
-import AssignedClassesTable from "../../../../../components/users/InstructorProfile/AssignedClassesTable";
-import ActivitiesTable from "../../../../../components/users/InstructorProfile/ActivitiesTable";
+import MainLayout from '@/components/Dashboard/MainLayout';
+import Overview from '@/components/users/InstructorProfile/Overview';
+import ProfileHeader from "@/components/users/InstructorProfile/ProfileHeader";
+import ProfileTabs from "@/components/users/InstructorProfile/ProfileTabs";
+import AssignedClassesTable from "@/components/users/InstructorProfile/AssignedClassesTable";
+import ActivitiesTable from "@/components/users/InstructorProfile/ActivitiesTable";
 
 const tabs = [
   "Overview",
@@ -87,11 +87,18 @@ if ((profile.role || profile.userType) !== "instructor") {
             <AssignedClassesTable assignedClasses={profile.assigned_classes || []} />
           </div>
         )}
-        {activeTab === "Activites" && (
-          <div className="mt-6">
-            <ActivitiesTable activitiesList={profile.activity_log || []} />
-          </div>
-        )}
+       {activeTab === "Activites" && (
+  <div className="mt-6">
+    <ActivitiesTable
+      activities={
+        (profile.activity_log || []).map((a: any) => ({
+          ...a,
+          description: a.details || "-", // map details to description
+        }))
+      }
+    />
+  </div>
+)}
       </div>
     </MainLayout>
   );

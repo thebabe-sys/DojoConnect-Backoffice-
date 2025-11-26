@@ -1,27 +1,20 @@
 import React from "react";
 
+interface SummaryType {
+  planName?: string;
+  billingCycle?: string;
+  planCost?: string;
+  status?: string;
+  nextPaymentAmount?: string;
+  nextPaymentDate?: string;
+  progressPercent?: number; // 0-100
+}
+
 interface SubscriptionSummaryProps {
-  summary?: {
-    planName?: string;
-    billingCycle?: string;
-    planCost?: string;
-    status?: string;
-    nextPaymentAmount?: string;
-    nextPaymentDate?: string;
-    progressPercent?: number; // 0-100
-  } | null;
+  summary?: SummaryType | null;
 }
 
 export default function SubscriptionSummary({ summary }: SubscriptionSummaryProps) {
-  if (!summary) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <img src="/illustration.png" alt="No info" className="w-40 h-40 mb-4" />
-        <div className="text-black font-semibold text-lg">No info yet</div>
-      </div>
-    );
-  }
-
   const {
     planName = "-",
     billingCycle = "-",
@@ -30,7 +23,7 @@ export default function SubscriptionSummary({ summary }: SubscriptionSummaryProp
     nextPaymentAmount = "-",
     nextPaymentDate = "-",
     progressPercent = 0,
-  } = summary;
+  } = summary || {};
 
   return (
     <div>

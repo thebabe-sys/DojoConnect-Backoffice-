@@ -21,17 +21,18 @@ export default function ForgotPasswordFlow() {
           onContinue={(enteredEmail: string) => {
             setEmail(enteredEmail);
             setStep(2);
-          }}
-        />
-      )}
-      {step === 2 && (
-        <VerifyOtpStep
-          onVerify={(enteredOtp: string) => {
+            }}
+          />
+          )}
+          {step === 2 && (
+          <VerifyOtpStep
+            onVerify={(enteredOtp: string) => {
             setOtp(enteredOtp);
             setStep(3);
-          }}
-        />
-      )}
+            }}
+          />
+          )}
+        
       {step === 3 && (
         <CreateNewPasswordStep
           onContinue={() => setStep(4)}

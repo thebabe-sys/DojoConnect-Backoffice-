@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { FaUser, FaChevronDown, FaExclamationCircle } from "react-icons/fa";
 import { FaRegSquare } from "react-icons/fa6";
 import { FaEllipsisV } from "react-icons/fa";
@@ -9,14 +10,15 @@ const months = [
 ];
 
 interface AttendanceStat {
-  icon: JSX.Element;
+  icon: ReactNode;
   days: number;
   label: string;
-  iconRight?: JSX.Element;
+  iconRight?: ReactNode;
   color?: string;
   bg?: string;
   percent?: string;
 }
+
 
 interface ClassSummary {
   id: number | string;
@@ -74,7 +76,27 @@ export default function AttendanceSummaryTab({
     },
   ];
 
-  return (
+  return ( <div className="bg-white rounded-md border border-gray-200 p-4 min-h-[400px] flex flex-col items-center justify-center">
+    {classes.length === 0 ? (
+      <div className="flex flex-col items-center justify-center w-full h-full">
+        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="none">
+          <path fill="url(#a)" d="M75 150c41.421 0 75-33.579 75-75S116.421 0 75 0 0 33.579 0 75s33.579 75 75 75Z"/>
+          <path fill="#fff" d="M120 150H30V53a16.018 16.018 0 0 0 16-16h58a15.906 15.906 0 0 0 4.691 11.308A15.89 15.89 0 0 0 120 53v97Z"/>
+          <path fill="#E51B1B" d="M75 102c13.255 0 24-10.745 24-24S88.255 54 75 54 51 64.745 51 78s10.745 24 24 24Z"/>
+          <path fill="#fff" d="M83.485 89.314 75 80.829l-8.485 8.485-2.829-2.829L72.172 78l-8.486-8.485 2.829-2.829L75 75.172l8.485-8.486 2.829 2.829L77.828 78l8.486 8.485-2.829 2.829Z"/>
+          <path fill="#FCDEDE" d="M88 108H62a3 3 0 1 0 0 6h26a3 3 0 1 0 0-6ZM97 120H53a3 3 0 1 0 0 6h44a3 3 0 1 0 0-6Z"/>
+          <defs>
+            <linearGradient id="a" x1="75" x2="75" y1="0" y2="150" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#FCEDED"/>
+              <stop offset="1" stopColor="#FCDEDE"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="mt-6 text-black font-semibold text-lg">No Attendance Records</div>
+        <div className="mt-2 text-gray-500 text-sm">No attendance data available for any class.</div>
+      </div>
+    ) : (
+      <>
     <div className="bg-white rounded-md border border-gray-200 p-4">
       {/* Attendance Summary Header + Cards in a bordered div */}
       <div className="border border-gray-200 rounded-md mb-6 p-4">
@@ -176,5 +198,8 @@ export default function AttendanceSummaryTab({
         )}
       </div>
     </div>
+    </>
+    )}
+  </div>
   );
 }

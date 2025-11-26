@@ -58,10 +58,13 @@ const ClassesTable: React.FC<ClassesTableProps> = ({ classes, loading }) => {
                 }
               }}
             >
-              <td className="px-4 py-3"><input type="checkbox" /></td>
-              <td className="flex items-center gap-2 px-4 py-3">
-                <img src={c.classImg} alt={c.className} className="w-8 h-8 rounded-full" />
-                {c.className}
+             <td className="flex items-center gap-2 px-4 py-3">
+                <img
+                  src={c.instructor.avatar } // Use static image if not provided
+                  alt={c.instructor.name}
+                  className="w-8 h-8 rounded-full"
+                />
+                {c.instructor.name}
               </td>
               <td className="px-4 py-3">{c.classLevel}</td>
               <td className="flex items-center gap-2 px-4 py-3">
@@ -69,7 +72,57 @@ const ClassesTable: React.FC<ClassesTableProps> = ({ classes, loading }) => {
                 {c.instructor.name}
               </td>
               <td className="px-4 py-3">{c.enrolledStudents}</td>
-              <td className="px-4 py-3">{c.dateCreated}</td>
+             // ...existing code...
+          {classes.map((c) => (
+            <tr
+              key={c.id}
+              className="hover:bg-gray-50 cursor-pointer"
+              onClick={() => {
+                if (onClassClick) {
+                  onClassClick(c.class_uid);
+                } else {
+                  router.push(`/dashboard/classes/${c.class_uid}`);
+                }
+              }}
+            >
+              <td className="px-4 py-3"><input type="checkbox" /></td>
+              <td className="flex items-center gap-2 px-4 py-3">
+                <img src={c.classImg} alt={c.className} className="w-8 h-8 rounded-full" />
+                {c.className}
+              </td>
+              <td className="px-4 py-3">{c.classLevel}</td>
+              <td className="flex items-center gap-2 px-4 py-3">
+                <img src={c.instructor.avatar || "/instructor-avatar.png"} alt={c.instructor.name} className="w-8 h-8 rounded-full" />
+                {c.instructor.name}
+              </td>
+              <td className="px-4 py-3">{c.enrolledStudents}</td>
+              <td className="px-4 py-3">
+                {/* Format date as 'Day, Month Date, Year' */}
+                {c.dateCreated
+                  ? new Date(c.dateCreated).toLocaleDateString("en-US", {
+                      weekday: "short",
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })
+                  : "-"}
+              </td>
+              <td className="px-4 py-3">
+                <span className={`px-2 py-1 rounded text-xs font-semibold
+                  ${c.status === "Active"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-red-100 text-red-600"}`}>
+                  {c.status}
+                </span>
+              </td>
+              <td className="px-4 py-3 text-right">
+                <span className="bg-white border border-gray-200 rounded p-1">
+                  <FaEllipsisV className="text-gray-400 inline" />
+                </span>
+              </td>
+            </tr>
+          ))}
+
               <td className="px-4 py-3">
                 <span className={`px-2 py-1 rounded text-xs font-semibold
                   ${c.status === "Active"

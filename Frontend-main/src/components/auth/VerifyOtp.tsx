@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function VerifyOtp({ onVerify }: { onVerify: () => void }) {
+export default function VerifyOtp({ onVerify }: { onVerify: (otp: string) => void }) {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [timer, setTimer] = useState(120);
 
@@ -21,6 +21,11 @@ export default function VerifyOtp({ onVerify }: { onVerify: () => void }) {
     }
   };
 
+  const handleVerify = () => {
+    if (isFilled) {
+      onVerify(otp.join(""));
+    }
+  };
   return (
     <div className="flex min-h-screen">
       <div className="hidden md:flex w-1/2 bg-[#E51B1B] justify-center items-center">
@@ -52,12 +57,12 @@ export default function VerifyOtp({ onVerify }: { onVerify: () => void }) {
             <span className="text-sm text-gray-500">{`${Math.floor(timer / 60)}:${String(timer % 60).padStart(2, "0")}`}</span>
           </div>
           <button
-            className={`w-full h-12 rounded-md text-white font-semibold ${isFilled ? "bg-[#E51B1B]" : "bg-red-200"}`}
-            disabled={!isFilled}
-            onClick={onVerify}
-          >
-            Verify code
-          </button>
+        className={`w-full h-12 rounded-md text-white font-semibold ${isFilled ? "bg-[#E51B1B]" : "bg-red-200"}`}
+        disabled={!isFilled}
+        onClick={handleVerify}
+      >
+        Verify code
+      </button>
         </div>
       </div>
     </div>

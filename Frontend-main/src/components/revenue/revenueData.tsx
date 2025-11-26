@@ -1,18 +1,19 @@
 import React from 'react';
+import type { ReactElement } from 'react';
 
 export type RevenueStat = {
   label: string;
   value: string | number;
   status: string;
-  icon: JSX.Element;
+  icon: ReactElement;
   chartImg?: string;
   change?: string;
 };
 
-export const IconA  = () => (
-<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.00001 0.390625L12 4.39062V6.00016H14.6667V12.6668H15.3333V14.0002H0.666672V12.6668H1.33334V6.00016H4.00001V4.39062L8.00001 0.390625ZM12 12.6668H13.3333V7.3335H12V12.6668ZM4.00001 7.3335H2.66667V12.6668H4.00001V7.3335ZM5.33334 4.94291V12.6668H7.33334V8.00016H8.66667V12.6668H10.6667V4.94291L8.00001 2.27624L5.33334 4.94291Z" fill="#E51B1B"/>
-</svg>
+export const IconA = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8.00001 0.390625L12 4.39062V6.00016H14.6667V12.6668H15.3333V14.0002H0.666672V12.6668H1.33334V6.00016H4.00001V4.39062L8.00001 0.390625ZM12 12.6668H13.3333V7.3335H12V12.6668ZM4.00001 7.3335H2.66667V12.6668H4.00001V7.3335ZM5.33334 4.94291V12.6668H7.33334V8.00016H8.66667V12.6668H10.6667V4.94291L8.00001 2.27624L5.33334 4.94291Z" fill="#E51B1B"/>
+  </svg>
 );
 
 export const IconB = () => (

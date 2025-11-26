@@ -71,27 +71,27 @@ const EnrolledClasses = ({ classesData }: EnrolledClassesProps) => {
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-100">
-            {classesData.map((row) => (
-              <tr key={row.id || idx} className="hover:bg-gray-50 cursor-pointer">
-                <td className="px-4 py-3">
-                  <input type="checkbox" />
-                </td>
+         <tbody className="bg-white divide-y divide-gray-100">
+  {classesData.map((row, idx) => (
+    <tr key={row.id || idx} className="hover:bg-gray-50 cursor-pointer">
+      <td className="px-4 py-3">
+        <input type="checkbox" />
+      </td>
                 <td className="flex items-center gap-2 px-4 py-3">
-                  <img src={row.classImg} alt={row.className} className="w-8 h-8 rounded-md object-cover" />
-                  <span>{row.className}</span>
-                </td>
+        <img src={row.classImg} alt={row.className} className="w-8 h-8 rounded-md object-cover" />
+        <span>{row.className}</span>
+      </td>
                 <td className="px-4 py-3">{row.classLevel}</td>
-                <td className="flex items-center gap-2 px-4 py-3">
-                  <img src={row.instructor.avatar} alt={row.instructor.name} className="w-7 h-7 rounded-full object-cover" />
-                  <span>{row.instructor.name}</span>
-                </td>
-                <td className="px-4 py-3">{row.enrollmentDate}</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-semibold">
-                    {row.status}
-                  </span>
-                </td>
+      <td className="flex items-center gap-2 px-4 py-3">
+        <img src={row.instructor.avatar} alt={row.instructor.name} className="w-7 h-7 rounded-full object-cover" />
+        <span>{row.instructor.name}</span>
+      </td>
+      <td className="px-4 py-3">{row.enrollmentDate}</td>
+      <td className="px-4 py-3">
+        <span className="px-2 py-1 rounded bg-green-100 text-green-700 text-xs font-semibold">
+          {row.status}
+        </span>
+      </td>
                 <td className="px-4 py-3 text-right relative" onClick={e => e.stopPropagation()}>
                   <FaEllipsisV
                     className="text-gray-400 inline cursor-pointer"

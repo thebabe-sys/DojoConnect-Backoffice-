@@ -7,7 +7,7 @@ import RevenueSummary from './RevenueSummary';
 import PaymentHistory from './PaymentHistory';
 import Header from '../Dashboard/Header';
 
-const FILTERS = [
+const FILTERS: { label: string; value: 'today' | 'week' | 'month' | 'all' | 'custom' }[] = [
   { label: 'Today', value: 'today' },
   { label: 'This week', value: 'week' },
   { label: 'This month', value: 'month' },
@@ -24,7 +24,7 @@ const YEARS = Array.from({ length: 20 }, (_, i) => 2016 + i);
 export default function RevenueLayout() {
   const pathname = usePathname();
   const [showCalendar, setShowCalendar] = useState(false);
-  const [activeFilter, setActiveFilter] = useState('today');
+  const [activeFilter, setActiveFilter] = useState<'today' | 'week' | 'month' | 'all' | 'custom'>('today');
   const [customRange, setCustomRange] = useState<{ start?: string, end?: string }>({});
   const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
   const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
@@ -64,7 +64,7 @@ export default function RevenueLayout() {
                   : 'bg-white text-gray-600 border-gray-300'
                 }`}
               onClick={() => {
-                setActiveFilter(f.value);
+                setActiveFilter(f.value as typeof activeFilter);
                 if (f.value === 'custom') setShowCalendar(true);
                 else setShowCalendar(false);
               }}

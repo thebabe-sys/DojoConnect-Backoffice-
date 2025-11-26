@@ -1,14 +1,7 @@
 import React from "react";
 
 export default function PaymentMethod({ method }: { method: any }) {
-  if (!method) {
-    return (
-      <div className="bg-white rounded-md shadow p-6">
-        <div className="text-gray-500">No payment method on file.</div>
-      </div>
-    );
-  }
-
+ 
   return (
     <div>
       <div className="bg-gray-100 rounded-md px-4 py-2 mb-4">

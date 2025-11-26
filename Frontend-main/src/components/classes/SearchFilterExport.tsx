@@ -3,13 +3,21 @@ import { FaSearch, FaFilter, FaDownload } from "react-icons/fa";
 import ExportModal from "./ExportModal";
 import CreateClassModal from "./CreateClassModal";
 
-export default function SearchFilterExport() {
-  const [showExport, setShowExport] = useState(false);
-  const [showCreate, setShowCreate] = useState(false);
+interface SearchFilterExportProps {
+  dojoName?: string;
+  ownerEmail?: string;
+  showCreate?: boolean;
+  onCreateNew?: () => void;
+}
 
-  // TODO: Replace these with actual values or props as needed
-  const dojoName = "Test Dojo";
-const ownerEmail = "admin@example.com";
+export default function SearchFilterExport({
+  dojoName = "Test Dojo",
+  ownerEmail = "admin@example.com",
+  showCreate = true,
+  onCreateNew,
+}: SearchFilterExportProps) {
+  const [showExport, setShowExport] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   return (
     <>
@@ -45,15 +53,20 @@ const ownerEmail = "admin@example.com";
         </div>
         {/* Right Buttons */}
         <div className="flex gap-2" style={{ position: "relative" }}>
-          <button
-            className="flex items-center gap-2 bg-red-600 text-white rounded-md px-4 py-2 font-medium shadow hover:bg-red-700 transition"
-            onClick={() => setShowCreate(true)}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-            </svg>
-            Create New
-          </button>
+          {showCreate && (
+            <button
+              className="flex items-center gap-2 bg-red-600 text-white rounded-md px-4 py-2 font-medium shadow hover:bg-red-700 transition"
+              onClick={() => {
+                if (onCreateNew) onCreateNew();
+                else setShowCreateModal(true);
+              }}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              Create New
+            </button>
+          )}
           <div style={{ position: "relative" }}>
             <button
               className="flex items-center gap-2 bg-white border border-red-600 rounded-md px-4 py-2 font-medium text-red-600 shadow hover:bg-red-50 transition"
@@ -70,12 +83,12 @@ const ownerEmail = "admin@example.com";
           </div>
         </div>
         <CreateClassModal
-        open={showCreate}
-        onClose={() => setShowCreate(false)}
-        dojoName={dojoName}
-        ownerEmail={ownerEmail}
-        onCreated={() => setShowCreate(false)}
-      />
+          open={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          dojoName={dojoName}
+          ownerEmail={ownerEmail}
+          onCreated={() => setShowCreateModal(false)}
+        />
       </div>
     </>
   );

@@ -74,13 +74,15 @@ export default function ChildrenTable({ childrenData }: ChildrenTableProps) {
 
   const age = getAge();
 
-  const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value
-    }));
-  };
+ const handleInput = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const { name, value, type } = e.target;
+  setForm(prev => ({
+    ...prev,
+    [name]: type === "checkbox"
+      ? (e.target as HTMLInputElement).checked
+      : value
+  }));
+};
 
   // Handle form submit
   const handleFormSubmit = (e: React.FormEvent) => {

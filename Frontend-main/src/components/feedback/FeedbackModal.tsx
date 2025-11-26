@@ -1,15 +1,30 @@
 import React from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
-export default function FeedbackModal({ feedback, onClose }) {
+type Feedback = {
+  status: string;
+  date: string;
+  time: string;
+  name: string;
+  email: string;
+  userType: string;
+  feedback: string;
+};
+
+interface FeedbackModalProps {
+  feedback: Feedback;
+  onClose: () => void;
+}
+
+export default function FeedbackModal({ feedback, onClose }: FeedbackModalProps) {
   return (
     <>
       {/* Overlay with reduced opacity */}
-     <div
-    className="fixed inset-0 z-40"
-    style={{ background: "rgba(0,0,0,0.5)" }}
-    onClick={onClose}
-/>
+      <div
+        className="fixed inset-0 z-40"
+        style={{ background: "rgba(0,0,0,0.5)" }}
+        onClick={onClose}
+      />
       {/* Modal */}
       <div className="fixed top-0 right-0 h-full w-full md:w-1/3 bg-white z-50 shadow-lg flex flex-col">
         {/* Arrow icon */}

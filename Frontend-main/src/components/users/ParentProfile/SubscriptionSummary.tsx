@@ -1,13 +1,7 @@
 import React from "react";
 
 export default function SubscriptionSummary({ summary }: { summary: any }) {
-  if (!summary) {
-    return (
-      <div className="bg-white rounded-md shadow p-6">
-        <div className="text-gray-500">No subscription information available.</div>
-      </div>
-    );
-  }
+
 
   return (
     <div>

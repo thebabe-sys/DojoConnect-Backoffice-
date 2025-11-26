@@ -28,6 +28,8 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
   const [showActions, setShowActions] = useState(false);
   const [modal, setModal] = useState<null | "deactivate" | "export" | "delete" | "status">(null);
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Editable fields state for edit section
   const [editFields, setEditFields] = useState({
@@ -38,12 +40,156 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
     street: profile.street || "",
   });
 
+  // Local profile for UI updates
+  const [localProfile, setLocalProfile] = useState(profile);
+
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEditFields({ ...editFields, [e.target.name]: e.target.value });
   };
 
+  // Helper: format date as 'Day, Month Date, Year'
+  const formatDate = (dateStr?: string | null) => {
+    if (!dateStr) return "-";
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "-";
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   // Helper: fallback for missing fields
   const fallback = (val: any, alt: string = "-") => val || alt;
+
+  // Save changes (edit)
+  const handleEditConfirm = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await fetch(`https://apis.dojoconnect.app/admin/parents/${profile.email}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editFields.name,
+          city: editFields.city,
+          street: editFields.street,
+        }),
+      });
+      setEditMode(false);
+      setModal(null);
+      setLocalProfile((prev: any) => ({
+        ...prev,
+        ...editFields,
+      }));
+    } catch (err: any) {
+      setError(err.message || "Error updating user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Deactivate
+  const handleDeactivateConfirm = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await fetch(`https://apis.dojoconnect.app/admin/parents/${profile.email}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "inactive" }),
+      });
+      setModal(null);
+      setLocalProfile((prev: any) => ({
+        ...prev,
+        subscription_status: "inactive",
+      }));
+    } catch (err: any) {
+      setError(err.message || "Error deactivating user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Export
+  const handleExportConfirm = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await fetch(`https://apis.dojoconnect.app/admin/parents/${profile.email}/export`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      setModal(null);
+    } catch (err: any) {
+      setError("Error exporting user data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Delete
+  const handleDeleteConfirm = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await fetch(`https://apis.dojoconnect.app/admin/parents/${profile.email}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ confirm: true }),
+      });
+      setModal(null);
+      // Optionally redirect or update UI after deletion
+    } catch (err: any) {
+      setError(err.message || "Error deleting user");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Modal layout
+  const ModalCard = ({
+    icon,
+    title,
+    description,
+    confirmText,
+    onConfirm,
+    showCancel = true,
+  }: {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+    confirmText: string;
+    onConfirm: () => void;
+    showCancel?: boolean;
+  }) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.03)" }}>
+      <div className="bg-white rounded-md p-6 w-full max-w-sm relative shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">{icon}</div>
+          <button className="text-gray-400 ml-2" onClick={() => setModal(null)}>✕</button>
+        </div>
+        <div className="text-lg font-semibold mb-1 text-left">{title}</div>
+        <div className="text-gray-600 mb-4 text-left text-sm">{description}</div>
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+        <div className="flex justify-end gap-2 mt-2">
+          {showCancel && (
+            <button className="bg-gray-200 text-black rounded px-4 py-1.5 text-sm" onClick={() => setModal(null)}>
+              Cancel
+            </button>
+          )}
+          <button
+            className="bg-[#E51B1B] text-white rounded px-4 py-1.5 text-sm"
+            onClick={onConfirm}
+            disabled={loading}
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   // Edit Profile Form
   if (editMode) {
@@ -69,35 +215,28 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
           {/* Readonly fields */}
           <div className="space-y-4">
             <label className="block text-gray-400 text-sm mb-1">Subscription Status</label>
-            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(profile.subscription_status)} readOnly />
+            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(localProfile.subscription_status)} readOnly />
             <label className="block text-gray-400 text-sm mb-1">Referral Code</label>
-            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(profile.referral_code)} readOnly />
+            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(localProfile.referral_code)} readOnly />
             <label className="block text-gray-400 text-sm mb-1">Joined</label>
-            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(profile.created_at)} readOnly />
+            <input className="w-full border border-gray-200 rounded-md px-3 py-2 bg-gray-100" value={fallback(localProfile.created_at)} readOnly />
           </div>
         </div>
-        <div className="flex justify-end gap-4 mt-8">
-          <button className="bg-gray-200 text-black rounded-md px-6 py-2" onClick={() => setEditMode(false)}>Cancel</button>
-          <button className="bg-[#E51B1B] text-white rounded-md px-6 py-2" onClick={() => setModal("status")}>Save Changes</button>
+        <div className="flex justify-end gap-2 mt-6">
+          <button className="bg-gray-200 text-black rounded px-4 py-1.5 text-sm" onClick={() => setEditMode(false)}>Cancel</button>
+          <button className="bg-[#E51B1B] text-white rounded px-4 py-1.5 text-sm" onClick={() => setModal("status")}>Save Changes</button>
         </div>
         {/* Save Changes Modal */}
         {modal === "status" && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.03)" }}>
-            <div className="bg-white rounded-md p-8 w-full max-w-md relative">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none"><rect width="48" height="48" x="4" y="4" fill="#D1FADF" rx="24"/><rect width="48" height="48" x="4" y="4" stroke="#ECFDF3" strokeWidth="8" rx="24"/><path stroke="#039855" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m23.5 28 3 3 6-6m5.5 3c0 5.523-4.477 10-10 10s-10-4.477-10-10 4.477-10 10-10 10 4.477 10 10Z"/></svg>
-                </div>
-                <button className="text-gray-400" onClick={() => setModal(null)}>✕</button>
-              </div>
-              <div className="text-lg font-semibold mb-2">Save Changes</div>
-              <div className="text-gray-600 mb-6">You are about to save profile changes.</div>
-              <div className="flex justify-end gap-4">
-                <button className="bg-gray-200 text-black rounded-md px-6 py-2" onClick={() => setModal(null)}>Cancel</button>
-                <button className="bg-[#E51B1B] text-white rounded-md px-6 py-2" onClick={() => { setModal(null); setEditMode(false); }}>Confirm</button>
-              </div>
-            </div>
-          </div>
+          <ModalCard
+            icon={
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><rect width="28" height="28" x="2" y="2" fill="#D1FADF" rx="14"/><rect width="28" height="28" x="2" y="2" stroke="#ECFDF3" strokeWidth="4" rx="14"/><path stroke="#039855" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m13.5 16 2 2 4-4"/></svg>
+            }
+            title="Save Changes"
+            description="You are about to save profile changes."
+            confirmText="Confirm"
+            onConfirm={handleEditConfirm}
+          />
         )}
       </div>
     );
@@ -121,7 +260,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             </svg>
           </button>
           {showActions && (
-            <div className="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg border z-50">
+            <div className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg border z-50">
               <button
                 className="flex items-center w-full px-4 py-3 hover:bg-gray-100"
                 onClick={() => { setEditMode(true); setShowActions(false); }}
@@ -168,7 +307,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
               <FaUser className="text-gray-400 w-5 h-5" />
               <div>
                 <div className="text-gray-500 text-xs">Name</div>
-                <div className="text-black font-medium">{fallback(profile.name)}</div>
+                <div className="text-black font-medium">{fallback(localProfile.name)}</div>
               </div>
             </div>
             <FaRegCopy className="text-gray-400 w-4 h-4 cursor-pointer" />
@@ -179,7 +318,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
               <FaEnvelope className="text-gray-400 w-5 h-5" />
               <div>
                 <div className="text-gray-500 text-xs">Email</div>
-                <div className="text-black font-medium">{fallback(profile.email)}</div>
+                <div className="text-black font-medium">{fallback(localProfile.email)}</div>
               </div>
             </div>
             <FaRegCopy className="text-gray-400 w-4 h-4 cursor-pointer" />
@@ -189,7 +328,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Role</div>
-              <div className="text-black font-medium">{fallback(profile.role)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.role)}</div>
             </div>
           </div>
           {/* Linked Dojo */}
@@ -197,23 +336,23 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Linked Dojo</div>
-              <div className="text-black font-medium">{fallback(profile.linkedDojo)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.linkedDojo)}</div>
             </div>
           </div>
-          {/* Joined */}
-          <div className="flex items-center gap-3">
-            <FaCalendarAlt className="text-gray-400 w-5 h-5" />
-            <div>
-              <div className="text-gray-500 text-xs">Joined</div>
-              <div className="text-black font-medium">{fallback(profile.created_at)}</div>
-            </div>
-          </div>
+         {/* Joined */}
+  <div className="flex items-center gap-3">
+    <FaCalendarAlt className="text-gray-400 w-5 h-5" />
+    <div>
+      <div className="text-gray-500 text-xs">Joined</div>
+      <div className="text-black font-medium">{formatDate(localProfile.created_at)}</div>
+    </div>
+  </div>
           {/* City */}
           <div className="flex items-center gap-3">
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">City</div>
-              <div className="text-black font-medium">{fallback(profile.city)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.city)}</div>
             </div>
           </div>
           {/* Street */}
@@ -221,7 +360,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Street</div>
-              <div className="text-black font-medium">{fallback(profile.street)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.street)}</div>
             </div>
           </div>
           {/* Subscription Status */}
@@ -229,7 +368,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Subscription Status</div>
-              <div className="text-black font-medium">{fallback(profile.subscription_status)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.subscription_status)}</div>
             </div>
           </div>
           {/* Referral Code */}
@@ -237,7 +376,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Referral Code</div>
-              <div className="text-black font-medium">{fallback(profile.referral_code)}</div>
+              <div className="text-black font-medium">{fallback(localProfile.referral_code)}</div>
             </div>
           </div>
         </div>
@@ -249,7 +388,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
               <FaUser className="text-gray-400 w-5 h-5" />
               <div>
                 <div className="text-gray-500 text-xs">Next of kin's full name</div>
-                <div className="text-black font-medium">-</div>
+                <div className="text-black font-medium">{fallback(localProfile.nextOfKinName)}</div>
               </div>
             </div>
             <FaRegCopy className="text-gray-400 w-4 h-4 cursor-pointer" />
@@ -260,7 +399,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
               <FaEnvelope className="text-gray-400 w-5 h-5" />
               <div>
                 <div className="text-gray-500 text-xs">Next of kin's email</div>
-                <div className="text-black font-medium">-</div>
+                <div className="text-black font-medium">{fallback(localProfile.nextOfKinEmail)}</div>
               </div>
             </div>
             <FaRegCopy className="text-gray-400 w-4 h-4 cursor-pointer" />
@@ -270,7 +409,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Relationship</div>
-              <div className="text-black font-medium">-</div>
+              <div className="text-black font-medium">{fallback(localProfile.relationship)}</div>
             </div>
           </div>
           {/* Number of Children */}
@@ -278,7 +417,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Number of children</div>
-              <div className="text-black font-medium">-</div>
+              <div className="text-black font-medium">{fallback(localProfile.childrenCount)}</div>
             </div>
           </div>
           {/* Class Group(s) */}
@@ -286,7 +425,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Class group(s)</div>
-              <div className="text-black font-medium">-</div>
+              <div className="text-black font-medium">{fallback(localProfile.classGroups)}</div>
             </div>
           </div>
           {/* Subscription Status (future) */}
@@ -294,7 +433,7 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
             <FaUser className="text-gray-400 w-5 h-5" />
             <div>
               <div className="text-gray-500 text-xs">Subscription status</div>
-              <div className="text-black font-medium">-</div>
+              <div className="text-black font-medium">{fallback(localProfile.subscriptionStatus)}</div>
             </div>
           </div>
         </div>
@@ -302,64 +441,42 @@ export default function ProfileOverview({ profile }: ProfileOverviewProps) {
 
       {/* Deactivate Modal */}
       {modal === "deactivate" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.03)" }}>
-          <div className="bg-white rounded-md p-8 w-full max-w-md relative">
-            <div className="flex items-center justify-between mb-4">
-              {/* Deactivate SVG */}
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" fill="none"><g filter="url(#a)"><rect width="48" height="48" x="2" y="1" fill="#fff" rx="10"/><rect width="47" height="47" x="2.5" y="1.5" stroke="#E9EAEB" rx="9.5"/><path fill="#E51B1B" d="M25 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM16.046 28.253c-.058.468.172.92.57 1.175A9.953 9.953 0 0 0 22 31c1.982 0 3.83-.578 5.384-1.573.398-.254.628-.707.57-1.175a6.001 6.001 0 0 0-11.908 0ZM26.75 20.75a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5h-5.5Z"/></g><defs><filter id="a" width="52" height="52" x="0" y="0" colorInterpolationFilters="sRGB" filterUnits="userSpaceOnUse"><feFlood floodOpacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dy="1"/><feGaussianBlur stdDeviation="1"/><feColorMatrix values="0 0 0 0 0.0392157 0 0 0 0 0.0509804 0 0 0 0 0.0705882 0 0 0 0.05 0"/><feBlend in2="BackgroundImageFix" result="effect1_dropShadow_11290_35768"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_11290_35768" result="shape"/></filter></defs></svg>
-              </div>
-              <button className="text-gray-400" onClick={() => setModal(null)}>✕</button>
-            </div>
-            <div className="text-lg font-semibold text-center mb-2">Deactivate Profile</div>
-            <div className="text-gray-600 text-center mb-6">Are you sure you want to deactivate this profile? The user can be reactivated back.</div>
-            <div className="flex justify-end gap-4">
-              <button className="bg-gray-200 text-black rounded-md px-6 py-2" onClick={() => setModal(null)}>Cancel</button>
-              <button className="bg-[#E51B1B] text-white rounded-md px-6 py-2">Deactivate</button>
-            </div>
-          </div>
-        </div>
+        <ModalCard
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><rect width="28" height="28" x="2" y="2" fill="#FEE4E2" rx="14"/><rect width="28" height="28" x="2" y="2" stroke="#FEF3F2" strokeWidth="4" rx="14"/><path stroke="#D92D20" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12v-.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874C14.48 8 13.92 8 12.8 8h-1.6c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874C8 9.52 8 10.08 8 11.2v.8m2 5.5v5m4-5v5M5 12h18m-2 0v11.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C16.72 28 15.88 28 14.2 28h-4.4c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C7 25.72 7 24.88 7 23.2V12"/></svg>
+          }
+          title="Deactivate Profile"
+          description="Are you sure you want to deactivate this profile? The user can be reactivated back."
+          confirmText="Deactivate"
+          onConfirm={handleDeactivateConfirm}
+        />
       )}
 
       {/* Export Modal */}
       {modal === "export" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.03)" }}>
-          <div className="bg-white rounded-md p-8 w-full max-w-md relative">
-            <div className="flex items-center justify-between mb-4">
-              {/* Export SVG */}
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"><path fill="#737373" d="M11.137 9.138 8.47 11.804a.667.667 0 0 1-.943 0L4.861 9.138a.667.667 0 1 1 .942-.943l1.529 1.529V2a.667.667 0 0 1 1.333 0v7.724l1.529-1.53a.667.667 0 1 1 .943.944Z"/><path fill="#737373" d="M2.665 11.666a.667.667 0 0 0-1.333 0v1a2.667 2.667 0 0 0 2.667 2.667h8a2.667 2.667 0 0 0 2.666-2.667v-1a.667.667 0 0 0-1.333 0v1c0 .737-.597 1.334-1.333 1.334h-8a1.333 1.333 0 0 1-1.334-1.334v-1Z"/></svg>
-              </div>
-              <button className="text-gray-400" onClick={() => setModal(null)}>✕</button>
-            </div>
-            <div className="text-lg font-semibold text-center mb-2">Export User Data</div>
-            <div className="text-gray-600 text-center mb-6">Exporting user data...</div>
-            <div className="flex justify-end gap-4">
-              <button className="bg-gray-200 text-black rounded-md px-6 py-2" onClick={() => setModal(null)}>Close</button>
-            </div>
-          </div>
-        </div>
+        <ModalCard
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><rect width="28" height="28" x="2" y="2" fill="#F2F2F2" rx="14"/><rect width="28" height="28" x="2" y="2" stroke="#EFEFEF" strokeWidth="4" rx="14"/><path fill="#737373" d="M19.137 17.138 16.47 19.804a.667.667 0 0 1-.943 0L12.861 17.138a.667.667 0 1 1 .942-.943l1.529 1.529V10a.667.667 0 0 1 1.333 0v7.724l1.529-1.53a.667.667 0 1 1 .943.944Z"/><path fill="#737373" d="M10.665 19.666a.667.667 0 0 0-1.333 0v1a2.667 2.667 0 0 0 2.667 2.667h8a2.667 2.667 0 0 0 2.666-2.667v-1a.667.667 0 0 0-1.333 0v1c0 .737-.597 1.334-1.333 1.334h-8a1.333 1.333 0 0 1-1.334-1.334v-1Z"/></svg>
+          }
+          title="Export User Data"
+          description="Exporting user data."
+          confirmText="Export"
+          onConfirm={handleExportConfirm}
+          showCancel={false}
+        />
       )}
 
       {/* Delete Modal */}
       {modal === "delete" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "rgba(0,0,0,0.03)" }}>
-          <div className="bg-white rounded-md p-8 w-full max-w-md relative">
-            <div className="flex items-center justify-between mb-4">
-              {/* Delete SVG */}
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none"><rect width="48" height="48" x="4" y="4" fill="#FEE4E2" rx="24"/><rect width="48" height="48" x="4" y="4" stroke="#FEF3F2" strokeWidth="8" rx="24"/><path stroke="#D92D20" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M32 22v-.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874C30.48 18 29.92 18 28.8 18h-1.6c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874C24 19.52 24 20.08 24 21.2v.8m2 5.5v5m4-5v5M19 22h18m-2 0v11.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C32.72 38 31.88 38 30.2 38h-4.4c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C21 35.72 21 34.88 21 33.2V22"/></svg>
-              </div>
-              <button className="text-gray-400" onClick={() => setModal(null)}>✕</button>
-            </div>
-            <div className="text-lg font-semibold text-center mb-2">Delete Profile</div>
-            <div className="text-gray-600 text-center mb-6">Are you sure you want to delete this profile? This action cannot be undone.</div>
-            <div className="flex justify-end gap-4">
-              <button className="bg-gray-200 text-black rounded-md px-6 py-2" onClick={() => setModal(null)}>Cancel</button>
-              <button className="bg-[#E51B1B] text-white rounded-md px-6 py-2">Delete</button>
-            </div>
-          </div>
-        </div>
+        <ModalCard
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="none"><rect width="28" height="28" x="2" y="2" fill="#FEE4E2" rx="14"/><rect width="28" height="28" x="2" y="2" stroke="#FEF3F2" strokeWidth="4" rx="14"/><path stroke="#D92D20" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 12v-.8c0-1.12 0-1.68-.218-2.108a2 2 0 0 0-.874-.874C14.48 8 13.92 8 12.8 8h-1.6c-1.12 0-1.68 0-2.108.218a2 2 0 0 0-.874.874C8 9.52 8 10.08 8 11.2v.8m2 5.5v5m4-5v5M5 12h18m-2 0v11.2c0 1.68 0 2.52-.327 3.162a3 3 0 0 1-1.311 1.311C16.72 28 15.88 28 14.2 28h-4.4c-1.68 0-2.52 0-3.162-.327a3 3 0 0 1-1.311-1.311C7 25.72 7 24.88 7 23.2V12"/></svg>
+          }
+          title="Delete Profile"
+          description="Are you sure you want to delete this profile? This action cannot be undone."
+          confirmText="Delete"
+          onConfirm={handleDeleteConfirm}
+        />
       )}
     </div>
   );
