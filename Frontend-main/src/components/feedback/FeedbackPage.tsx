@@ -31,7 +31,6 @@ export default function FeedbackPage() {
       });
   }, []);
 
-  // Reset to page 1 if feedbacks change and current page is out of range
   useEffect(() => {
     const totalPages = Math.ceil(feedbacks.length / rowsPerPage);
     if (page > totalPages && totalPages > 0) setPage(1);
@@ -40,9 +39,9 @@ export default function FeedbackPage() {
   const paginatedFeedbacks = feedbacks.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
-    <div className="p-8 space-y-6 relative">
-      <div className="font-bold text-xl mb-2">Feedbacks</div>
-      <div className="bg-white rounded-md p-4 space-y-4">
+    <div className="p-4 sm:p-8 space-y-6 relative">
+      <div className="font-bold text-lg sm:text-xl mb-2">Feedbacks</div>
+      <div className="bg-white rounded-md p-2 sm:p-4 space-y-4">
         {/* Only show SearchActionBar if there are feedbacks */}
         {feedbacks.length > 0 && <SearchActionBar />}
         <div>
@@ -51,50 +50,52 @@ export default function FeedbackPage() {
               <img
                 src="https://res.cloudinary.com/cloud-two-tech/image/upload/v1750963970/Illustration_found_gfbbgd.png"
                 alt="No data"
-                className="w-[225px] h-[188px] mb-4"
+                className="w-[180px] h-[150px] sm:w-[225px] sm:h-[188px] mb-4"
               />
-              <h2 className="text-2xl font-semibold text-[#303030]">Nothing here yet...</h2>
-              <p className="text-base text-[#9E9E9E] mt-3">Whoops ... there’s no information available yet</p>
+              <h2 className="text-xl sm:text-2xl font-semibold text-[#303030]">Nothing here yet...</h2>
+              <p className="text-sm sm:text-base text-[#9E9E9E] text-center mt-3">Whoops ... there’s no information available yet</p>
             </div>
           ) : (
             <>
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-100 rounded-md">
-                    <th className="p-3 rounded-l-md text-left">User Full Name</th>
-                    <th className="p-3 text-left">User Type</th>
-                    <th className="p-3 text-left">Feedback</th>
-                    <th className="p-3 text-left">Date & Time</th>
-                    <th className="p-3 rounded-r-md text-left">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {paginatedFeedbacks.map((fb) => (
-                    <tr key={fb.id} className="border-b cursor-pointer hover:bg-gray-50"
-                      onClick={() => setSelectedFeedback(fb)}
-                    >
-                      <td className="p-3 flex items-center gap-2">
-                        <img src={fb.img} alt={fb.name} className="w-8 h-8 rounded-full" />
-                        <span className="whitespace-nowrap">{fb.name}</span>
-                      </td>
-                      <td className="p-3 whitespace-nowrap">{fb.userType}</td>
-                      <td className="p-3">{fb.feedback}</td>
-                      <td className="p-3">{fb.date} {fb.time}</td>
-                      <td className="p-3">
-                        {fb.status === "In-Review" ? (
-                          <span className="rounded-full px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-500 whitespace-nowrap">
-                            In-Review
-                          </span>
-                        ) : (
-                          <span className="rounded-full px-3 py-1 text-xs font-semibold bg-green-100 text-green-600 whitespace-nowrap">
-                            Resolved
-                          </span>
-                        )}
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="min-w-[700px] w-full text-xs sm:text-sm">
+                  <thead>
+                    <tr className="bg-gray-100 rounded-md">
+                      <th className="p-2 sm:p-3 rounded-l-md text-left">User Full Name</th>
+                      <th className="p-2 sm:p-3 text-left">User Type</th>
+                      <th className="p-2 sm:p-3 text-left">Feedback</th>
+                      <th className="p-2 sm:p-3 text-left">Date & Time</th>
+                      <th className="p-2 sm:p-3 rounded-r-md text-left">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {paginatedFeedbacks.map((fb) => (
+                      <tr key={fb.id} className="border-b cursor-pointer hover:bg-gray-50"
+                        onClick={() => setSelectedFeedback(fb)}
+                      >
+                        <td className="p-2 sm:p-3 flex items-center gap-2">
+                          <img src={fb.img} alt={fb.name} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full" />
+                          <span className="whitespace-nowrap">{fb.name}</span>
+                        </td>
+                        <td className="p-2 sm:p-3 whitespace-nowrap">{fb.userType}</td>
+                        <td className="p-2 sm:p-3">{fb.feedback}</td>
+                        <td className="p-2 sm:p-3">{fb.date} {fb.time}</td>
+                        <td className="p-2 sm:p-3">
+                          {fb.status === "In-Review" ? (
+                            <span className="rounded-full px-2 sm:px-3 py-1 text-xs font-semibold bg-gray-100 text-gray-500 whitespace-nowrap">
+                              In-Review
+                            </span>
+                          ) : (
+                            <span className="rounded-full px-2 sm:px-3 py-1 text-xs font-semibold bg-green-100 text-green-600 whitespace-nowrap">
+                              Resolved
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <Pagination
                 totalRows={feedbacks.length}
                 rowsPerPage={rowsPerPage}

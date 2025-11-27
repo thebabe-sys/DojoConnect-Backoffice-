@@ -79,7 +79,7 @@ export default function ClassesPage() {
           className="w-[225px] h-[188px] mb-4"
         />
         <h2 className="text-2xl font-semibold text-[#303030]">Nothing here yet...</h2>
-        <p className="text-base text-[#9E9E9E] mt-3">Whoops ... there’s no class information available yet</p>
+        <p className="text-base text-center text-[#9E9E9E] mt-3">Whoops ... there’s no class information available yet</p>
       </div>
     ) : (
       <>

@@ -635,9 +635,9 @@ const SeventhCardModal = () => (
   ))}
 </div>
             {/* Two-column container */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Left: Total Users */}
-              <div className="flex flex-col justify-between bg-gray-50 rounded-lg p-6 h-full">
+              <div className="flex flex-col justify-between bg-gray-50 rounded-lg p-6 h-[370px]">
                 <div>
                   <h2 className="text-base font-semibold text-[#475367] mb-1">Total Users</h2>
                   <div className="text-2xl font-bold text-[#0F1828] mb-8">
@@ -645,6 +645,8 @@ const SeventhCardModal = () => (
                       ? Number(apiData.users.total_users).toLocaleString()
                       : "0"}
                   </div>
+                  {/* Add extra space before user profiles */}
+                  <div className="mb-6"></div>
                   <div className="space-y-4">
                     {userStats.map((user) => (
                       <div key={user.label} className="flex items-center justify-between">
@@ -667,7 +669,7 @@ const SeventhCardModal = () => (
                 </button>
               </div>
               {/* Right: Top Dojo Revenue */}
-              <div className="flex flex-col justify-between bg-gray-50 rounded-lg p-6 h-full">
+              <div className="flex flex-col justify-between bg-gray-50 rounded-lg p-6 h-[370px]">
                 <div>
                   <h2 className="text-base font-semibold text-[#475367] mb-4">Top Dojo Revenue</h2>
                   <div className="space-y-4">

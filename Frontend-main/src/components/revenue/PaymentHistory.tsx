@@ -183,36 +183,54 @@ export default function PaymentHistory({ filter, customRange }: PaymentHistoryPr
       .finally(() => setLoading(false));
   };
 
+  // Empty state
+  if (loading || rows.length === 0) {
+    return (
+      <div className="bg-white rounded-xl p-4 sm:p-6 mt-8 relative">
+        <div className="flex flex-col items-center justify-center w-full h-full" style={{ minHeight: 220 }}>
+          <img
+src="https://res.cloudinary.com/cloud-two-tech/image/upload/v1750963970/Illustration_found_gfbbgd.png"
+            alt="No payment history"
+            className="w-32 h-32 sm:w-48 sm:h-48 mb-6 opacity-80"
+          />
+          <span className="text-gray-400 font-bold text-xs sm:text-base">
+            No payment history found.
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-xl p-6 mt-8 relative">
+    <div className="bg-white rounded-xl p-4 sm:p-6 mt-8 relative">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-        <span className="text-base font-semibold text-black">Payment History</span>
-        <div className="flex gap-2 items-center relative">
+        <span className="text-sm sm:text-base font-semibold text-black">Payment History</span>
+        <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center relative w-full sm:w-auto">
           {/* Search */}
-          <div className="flex items-center border border-gray-300 rounded-md bg-white px-3 py-2">
+          <div className="flex items-center border border-gray-300 rounded-md bg-white px-2 py-1 sm:px-3 sm:py-2 w-full sm:w-auto mb-2 sm:mb-0">
             <FaSearch className="text-gray-400 mr-2" />
             <input
               type="text"
               placeholder="Search"
-              className="outline-none bg-transparent text-gray-500 placeholder-gray-400 w-32 md:w-40"
+              className="outline-none bg-transparent text-xs sm:text-sm text-gray-500 placeholder-gray-400 w-full sm:w-32 md:w-40"
               disabled
             />
           </div>
           {/* Filter */}
-          <div className="flex items-center border border-gray-300 rounded-md bg-white px-3 py-2">
+          <div className="flex items-center border border-gray-300 rounded-md bg-white px-2 py-1 sm:px-3 sm:py-2 w-full sm:w-auto mb-2 sm:mb-0">
             <FaFilter className="text-gray-400 mr-2" />
             <input
               type="text"
               placeholder="Filter"
-              className="outline-none bg-transparent text-gray-500 placeholder-gray-400 w-16 md:w-24"
+              className="outline-none bg-transparent text-xs sm:text-sm text-gray-500 placeholder-gray-400 w-full sm:w-16 md:w-24"
               disabled
             />
           </div>
           {/* Export */}
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <button
-              className="flex items-center gap-2 bg-red-600 border border-gray-300 rounded-md px-4 py-2 text-white font-medium"
+              className="flex items-center gap-2 bg-red-600 border border-gray-300 rounded-md px-4 py-2 text-xs sm:text-sm text-white font-medium w-full sm:w-auto"
               onClick={() => setShowExport((v) => !v)}
               type="button"
             >
@@ -230,53 +248,32 @@ export default function PaymentHistory({ filter, customRange }: PaymentHistoryPr
       </div>
       {/* Table */}
       <div className="bg-white rounded-md overflow-x-auto">
-        <table className="min-w-full">
+        <table className="min-w-[700px] w-full text-xs sm:text-sm">
           <thead>
             <tr className="bg-gray-50">
-              <th className="py-3 px-4 text-left text-black font-semibold">Dojo Name</th>
-              <th className="py-3 px-4 text-left text-black font-semibold">Plan</th>
-              <th className="py-3 px-4 text-left text-black font-semibold">Amount</th>
-              <th className="py-3 px-4 text-left text-black font-semibold">Date</th>
-              <th className="py-3 px-4 text-left text-black font-semibold">Status</th>
+              <th className="py-2 px-2 sm:py-3 sm:px-4 text-left text-black font-semibold">Dojo Name</th>
+              <th className="py-2 px-2 sm:py-3 sm:px-4 text-left text-black font-semibold">Plan</th>
+              <th className="py-2 px-2 sm:py-3 sm:px-4 text-left text-black font-semibold">Amount</th>
+              <th className="py-2 px-2 sm:py-3 sm:px-4 text-left text-black font-semibold">Date</th>
+              <th className="py-2 px-2 sm:py-3 sm:px-4 text-left text-black font-semibold">Status</th>
             </tr>
           </thead>
-      <tbody>
-  {(loading || rows.length === 0) ? (
-    <tr>
-      <td
-        colSpan={5}
-        className="py-8 min-h-[300px] text-center align-middle"
-        style={{ height: 320, padding: 0 }}
-      >
-        <div className="flex flex-col items-center justify-center w-full h-full">
-          <img
-            src="/illustration.png"
-            alt="No payment history"
-            className="w-48 h-48 mb-6 opacity-80"
-          />
-          <span className="text-gray-400 font-bold text-base">
-            No payment history found.
-          </span>
-        </div>
-      </td>
-    </tr>
-  ) : (
-    rows.map((row, idx) => (
-      <tr key={idx} className="border-t border-gray-200">
-        <td className="py-3 px-4 text-gray-600">{row.dojo}</td>
-        <td className="py-3 px-4 text-gray-600">{row.plan}</td>
-        <td className="py-3 px-4 text-gray-600">{row.amount}</td>
-        <td className="py-3 px-4 text-gray-600">{row.date}</td>
-        <td className="py-3 px-4 text-gray-600">
-          <span className="flex items-center gap-2">
-            <span className={`h-2 w-2 rounded-full ${row.statusColor}`}></span>
-            <span>{row.status}</span>
-          </span>
-        </td>
-      </tr>
-    ))
-  )}
-</tbody>
+          <tbody>
+            {rows.map((row, idx) => (
+              <tr key={idx} className="border-t border-gray-200">
+                <td className="py-2 px-2 sm:py-3 sm:px-4 text-gray-600">{row.dojo}</td>
+                <td className="py-2 px-2 sm:py-3 sm:px-4 text-gray-600">{row.plan}</td>
+                <td className="py-2 px-2 sm:py-3 sm:px-4 text-gray-600">{row.amount}</td>
+                <td className="py-2 px-2 sm:py-3 sm:px-4 text-gray-600">{row.date}</td>
+                <td className="py-2 px-2 sm:py-3 sm:px-4 text-gray-600">
+                  <span className="flex items-center gap-2">
+                    <span className={`h-2 w-2 rounded-full ${row.statusColor}`}></span>
+                    <span>{row.status}</span>
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     </div>

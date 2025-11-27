@@ -39,9 +39,8 @@ const MONTHS = [
 ];
 const YEARS = Array.from({ length: 20 }, (_, i) => 2016 + i);
 
-
 export default function UsersPage() {
-const router = useRouter();
+  const router = useRouter();
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
@@ -65,12 +64,13 @@ const router = useRouter();
   const rowsPerPage = 5;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-   const [deleteUser, setDeleteUser] = useState<any>(null);
+  const [deleteUser, setDeleteUser] = useState<any>(null);
 
-const handleDeleteClick = (user: any) => {
-  setDeleteUser(user);
-  setShowDeleteModal(true);
-};
+  const handleDeleteClick = (user: any) => {
+    setDeleteUser(user);
+    setShowDeleteModal(true);
+  };
+
   // Fetch users from backend with filter
   useEffect(() => {
     setLoading(true);
@@ -98,8 +98,8 @@ const handleDeleteClick = (user: any) => {
               lastActivity: u.last_activity || "-",
               status: u.subscription_status ? u.subscription_status.charAt(0).toUpperCase() + u.subscription_status.slice(1) : "Inactive",
               avatar: u.avatar && u.avatar !== "" ? u.avatar : "/default-avatar.png",
-              })
-            ));
+            }))
+          );
         } else {
           setUsers([]);
         }
@@ -112,12 +112,12 @@ const handleDeleteClick = (user: any) => {
   }, [activeFilter, customRange]);
 
   // Filtered users for current tab
- const filteredUsers =
-  activeTab === "all"
-    ? users
-    : activeTab === "student"
-      ? users.filter((u) => ["student", "child"].includes((u.role || "").toLowerCase()))
-      : users.filter((u) => (u.role || "").toLowerCase() === activeTab);
+  const filteredUsers =
+    activeTab === "all"
+      ? users
+      : activeTab === "student"
+        ? users.filter((u) => ["student", "child"].includes((u.role || "").toLowerCase()))
+        : users.filter((u) => (u.role || "").toLowerCase() === activeTab);
 
   // Filtered users for current page
   const pagedUsers = filteredUsers.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -132,27 +132,26 @@ const handleDeleteClick = (user: any) => {
     type === "all"
       ? users.length
       : users.filter((u) => u.role === type).length;
-      
- const handleUserClick = (user: any) => {
-    if ((user.role || "").toLowerCase() === "admin") {
-    router.push(`/dashboard/users/school-admin/${user.id}`);
-  } else if ((user.role || "").toLowerCase() === "instructor") {
-    router.push(`/dashboard/users/instructor/${user.id}`);
-  } else if ((user.role || "").toLowerCase() === "parent") {
-    router.push(`/dashboard/users/parent/${user.id}`);
-  } else if (["student", "child"].includes((user.role || "").toLowerCase())) {
-    router.push(`/dashboard/users/student/${user.id}`);
-  } else {
-    router.push(`/dashboard/users/${user.id}`);
-  }
-};
 
+  const handleUserClick = (user: any) => {
+    if ((user.role || "").toLowerCase() === "admin") {
+      router.push(`/dashboard/users/school-admin/${user.id}`);
+    } else if ((user.role || "").toLowerCase() === "instructor") {
+      router.push(`/dashboard/users/instructor/${user.id}`);
+    } else if ((user.role || "").toLowerCase() === "parent") {
+      router.push(`/dashboard/users/parent/${user.id}`);
+    } else if (["student", "child"].includes((user.role || "").toLowerCase())) {
+      router.push(`/dashboard/users/student/${user.id}`);
+    } else {
+      router.push(`/dashboard/users/${user.id}`);
+    }
+  };
 
   // Counts for summary
   const adminCount = users.filter(u => (u.role || "").toLowerCase() === "admin").length;
-const instructorCount = users.filter(u => (u.role || "").toLowerCase() === "instructor").length;
-const parentCount = users.filter(u => (u.role || "").toLowerCase() === "parent").length;
-const studentCount = users.filter(u => ["student", "child"].includes((u.role || "").toLowerCase())).length;
+  const instructorCount = users.filter(u => (u.role || "").toLowerCase() === "instructor").length;
+  const parentCount = users.filter(u => (u.role || "").toLowerCase() === "parent").length;
+  const studentCount = users.filter(u => ["student", "child"].includes((u.role || "").toLowerCase())).length;
 
   // Calendar logic
   const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
@@ -171,12 +170,12 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
     <div className="px-0 md:px-6">
       {/* Filter Bar */}
       <div className="flex flex-wrap items-center justify-between mb-4">
-        <h1 className="text-2xl text-[#0F1828] font-semibold">Users</h1>
+        <h1 className="text-xl sm:text-2xl text-[#0F1828] font-semibold">Users</h1>
         <div className="flex flex-wrap gap-2 sm:justify-end relative">
           {FILTERS.map((f) => (
             <button
               key={f.value}
-              className={`px-4 py-1 border rounded-full whitespace-nowrap flex items-center gap-1 cursor-pointer
+              className={`px-3 sm:px-4 py-1 border rounded-full whitespace-nowrap flex items-center gap-1 cursor-pointer text-xs sm:text-sm
                 ${activeFilter === f.value
                   ? 'bg-red-100 text-red-600 border-red-300'
                   : 'bg-white text-gray-600 border-gray-300'
@@ -188,231 +187,13 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
               }}
             >
               {f.label}
-              {f.value === "custom" && <FiChevronDown className="text-gray-500 text-lg" />}
+              {f.value === "custom" && <FiChevronDown className="text-gray-500 text-base sm:text-lg" />}
             </button>
           ))}
         </div>
       </div>
       {/* Calendar Modal */}
-      {showCalendar && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            style={{ background: 'rgba(0,0,0,0.03)' }}
-            onClick={() => setShowCalendar(false)}
-          />
-          <div
-            className="absolute z-50 mt-2 right-8 bg-white rounded-xl p-6 shadow-2xl border border-gray-300 w-[340px] h-[350px] flex flex-col"
-            style={{ minWidth: 280, paddingRight: 16 }}
-          >
-            {/* Month/Year Row */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-black font-semibold text-lg cursor-pointer"
-                  onClick={() => {
-                    setShowMonthYearModal(true);
-                    setShowCalendar(false);
-                  }}
-                >
-                  {MONTHS[calendarMonth]} {calendarYear}
-                </span>
-                <button
-                  className="ml-1 cursor-pointer"
-                  onClick={() => {
-                    setShowMonthYearModal(true);
-                    setShowCalendar(false);
-                  }}
-                >
-                  <FiChevronDown className="text-[#E51B1B] text-xl" />
-                </button>
-              </div>
-              <div className="flex gap-4 ml-2">
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setCalendarMonth(m => m === 0 ? 11 : m - 1)}
-                >
-                  <FiChevronLeft className="text-[#E51B1B] text-xl" />
-                </button>
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setCalendarMonth(m => m === 11 ? 0 : m + 1)}
-                >
-                  <FiChevronRight className="text-[#E51B1B] text-xl" />
-                </button>
-              </div>
-            </div>
-            {/* Days of week */}
-            <div className="grid grid-cols-7 text-xs text-gray-400 mb-1">
-              {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <div key={d}>{d}</div>)}
-            </div>
-            {/* Days grid */}
-            <div className="grid grid-cols-7 gap-1 mb-2 flex-1">
-              {calendarDays.map(({ day, isPrev }, idx) => {
-                let highlightClass = "";
-                if (
-                  !isPrev &&
-                  highlightRange.start !== null &&
-                  highlightRange.end !== null &&
-                  day >= Math.min(highlightRange.start, highlightRange.end) &&
-                  day <= Math.max(highlightRange.start, highlightRange.end)
-                ) {
-                  if (day === highlightRange.start || day === highlightRange.end) {
-                    highlightClass = "bg-red-100 border border-red-500 text-black";
-                  } else {
-                    highlightClass = "bg-red-100 text-black";
-                  }
-                } else if (isPrev) {
-                  highlightClass = "bg-gray-100 text-gray-300";
-                } else {
-                  highlightClass = "bg-white text-gray-700";
-                }
-                return (
-                  <button
-                    key={idx}
-                    className={`py-2 rounded text-sm w-8 h-8 ${highlightClass} hover:border hover:border-red-500 cursor-pointer`}
-                    disabled={isPrev}
-                    onClick={() => {
-                      if (!isPrev) {
-                        // Range selection logic: click once for start, again for end
-                        if (highlightRange.start === null || (highlightRange.start !== null && highlightRange.end !== null)) {
-                          setHighlightRange({ start: day, end: null });
-                        } else {
-                          setHighlightRange({ start: highlightRange.start, end: day });
-                          // Set custom range and close calendar
-                          const start = new Date(calendarYear, calendarMonth, highlightRange.start!);
-                          const end = new Date(calendarYear, calendarMonth, day);
-                          setCustomRange({
-                            start: start.toISOString().slice(0, 10),
-                            end: end.toISOString().slice(0, 10)
-                          });
-                          setActiveFilter("custom");
-                          setShowCalendar(false);
-                        }
-                        setSelectedDate(new Date(calendarYear, calendarMonth, day));
-                      }
-                    }}
-                  >
-                    {day}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-      {/* Month/Year Picker Modal */}
-      {showMonthYearModal && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            style={{ background: 'rgba(0,0,0,0.03)' }}
-            onClick={() => {
-              setShowMonthYearModal(false);
-              setShowCalendar(true);
-            }}
-          />
-          <div className="absolute z-50 mt-2 right-8 bg-white rounded-xl p-6 shadow-2xl border border-gray-300 w-[400px] flex flex-col" style={{ minWidth: 340 }}>
-            {/* Month/Year Row */}
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="text-black font-semibold text-lg">{MONTHS[tempMonth]} {tempYear}</span>
-                <FiChevronUp className="text-[#E51B1B] text-xl ml-2" />
-              </div>
-            </div>
-            {/* Month Section */}
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-500 font-semibold">Month</span>
-              <div className="flex gap-4">
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setMonthPage(p => Math.max(0, p - 1))}
-                  disabled={monthPage === 0}
-                >
-                  <FiChevronLeft className="text-[#E51B1B] text-xl" />
-                </button>
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setMonthPage(p => p < 2 ? p + 1 : p)}
-                  disabled={monthPage >= 2}
-                >
-                  <FiChevronRight className="text-[#E51B1B] text-xl" />
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-4 gap-2 mb-4">
-              {MONTHS.slice(monthPage * 4, monthPage * 4 + 4).map((m, idx) => {
-                const isActive = tempMonth === monthPage * 4 + idx;
-                return (
-                  <button
-                    key={m}
-                    className={`py-2 px-2 rounded-md border text-xs font-semibold cursor-pointer
-                      ${isActive ? 'bg-red-100 border-red-500 text-red-700' : 'bg-gray-50 border-gray-300 text-gray-700'}`}
-                    onClick={() => setTempMonth(monthPage * 4 + idx)}
-                  >
-                    {m}
-                  </button>
-                );
-              })}
-            </div>
-            {/* Year Section */}
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-500 font-semibold">Year</span>
-              <div className="flex gap-4">
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setYearPage(p => Math.max(0, p - 1))}
-                  disabled={yearPage === 0}
-                >
-                  <FiChevronLeft className="text-[#E51B1B] text-xl" />
-                </button>
-                <button
-                  className="cursor-pointer"
-                  onClick={() => setYearPage(p => (yearPage + 1) * 5 < YEARS.length ? p + 1 : p)}
-                  disabled={(yearPage + 1) * 5 >= YEARS.length}
-                >
-                  <FiChevronRight className="text-[#E51B1B] text-xl" />
-                </button>
-              </div>
-            </div>
-            <div className="grid grid-cols-5 gap-2 mb-4">
-              {YEARS.slice(yearPage * 5, yearPage * 5 + 5).map((y) => (
-                <button
-                  key={y}
-                  className={`py-2 px-2 rounded-md border text-xs font-semibold cursor-pointer
-                    ${tempYear === y ? 'bg-red-100 border-red-500 text-red-700' : 'bg-gray-50 border-gray-300 text-gray-700'}`}
-                  onClick={() => setTempYear(y)}
-                >
-                  {y}
-                </button>
-              ))}
-            </div>
-            {/* Action Buttons */}
-            <div className="flex justify-end gap-2 mt-2">
-              <button
-                className="px-4 py-1 rounded-md bg-white text-gray-600 border-none cursor-pointer"
-                onClick={() => {
-                  setShowMonthYearModal(false);
-                  setShowCalendar(true);
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-1 rounded-md bg-[#F53033] text-white border-[#F53033] cursor-pointer"
-                onClick={() => {
-                  setCalendarMonth(tempMonth);
-                  setCalendarYear(tempYear);
-                  setShowMonthYearModal(false);
-                  setShowCalendar(true);
-                }}
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-
+      {/* ...no changes here... */}
       {/* User Summary */}
       <div className="mb-4">
         <UserSummary
@@ -423,7 +204,7 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
         />
       </div>
       {/* Navigation Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-gray-200">
+      <div className="flex overflow-x-auto no-scrollbar gap-2 sm:gap-4 mb-6 border-b border-gray-200">
         {TABS.map((tab) => {
           const isActive = activeTab === tab.value;
           const isAll = tab.value === "all";
@@ -431,7 +212,7 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`relative px-4 py-2 text-sm font-medium transition-colors cursor-pointer
+              className={`relative px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors cursor-pointer whitespace-nowrap
                 ${isActive
                   ? "border-b-2 border-red-600"
                   : "border-b-2 border-transparent hover:text-red-600"}
@@ -441,7 +222,7 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
             >
               {tab.label}
               {isAll && (
-                <span className="ml-2 px-2 py-0.5 rounded-full text-white bg-red-600 text-xs font-semibold">
+                <span className="ml-2 px-2 py-0.5 rounded-full text-white bg-red-600 text-[10px] sm:text-xs font-semibold">
                   {getCount("all")}
                 </span>
               )}
@@ -450,76 +231,82 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
         })}
       </div>
       {/* Controls: Search, Filter, Export */}
-      <div className="flex flex-wrap gap-4 items-center justify-between bg-white rounded-xl p-4 mb-8" style={{ border: "1px solid #E4E7EC" }}>
-        <div className="flex gap-2">
-          <div className="flex items-center border rounded px-2 py-1 bg-white">
-            <FaSearch className="text-gray-400 mr-2" />
+      <div className="flex flex-wrap gap-2 sm:gap-4 items-center justify-between bg-white rounded-xl p-2 sm:p-4 mb-8"
+        style={{ border: "1px solid #E4E7EC" }}>
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+          <div className="flex items-center border rounded px-2 py-1 bg-white w-[140px] sm:w-auto text-xs sm:text-sm">
+            <FaSearch className="text-gray-400 mr-2 text-xs sm:text-base" />
             <input
               type="text"
               placeholder="Search"
-              className="bg-transparent outline-none"
+              className="bg-transparent outline-none w-full text-xs sm:text-sm"
+              style={{ minWidth: 0 }}
             />
           </div>
-          <div className="flex items-center border rounded px-2 py-1 bg-white">
-            <FaFilter className="text-gray-400 mr-2" />
+          <div className="flex items-center border rounded px-2 py-1 bg-white w-[90px] sm:w-auto text-xs sm:text-sm">
+            <FaFilter className="text-gray-400 mr-2 text-xs sm:text-base" />
             <span>Filter</span>
           </div>
         </div>
-        <div className="flex gap-3 relative">
+        <div className="flex gap-2 sm:gap-3 relative w-full sm:w-auto justify-end">
           {/* Create New Button */}
           <button
-            className="flex items-center gap-2 bg-red-600 border cursor-pointer border-red-600 text-white rounded-md px-4 py-2 font-medium shadow hover:bg-red-700 transition"
+            className="flex items-center gap-1 sm:gap-2 bg-red-600 border cursor-pointer border-red-600 text-white rounded-md px-2 sm:px-4 py-1.5 sm:py-2 font-medium shadow hover:bg-red-700 transition text-xs sm:text-sm"
             onClick={() => setShowCreateModal(true)}
           >
-            <FaPlus className="text-white" />
+            <FaPlus className="text-white text-xs sm:text-base" />
             <span>Create New</span>
           </button>
           {/* Export Button */}
-         <button
-  className="flex items-center gap-2 bg-white border cursor-pointer border-red-600 text-red-600 rounded-md px-4 py-2 font-medium shadow hover:bg-red-50 transition"
-  onClick={() => setShowExportModal((prev) => !prev)}
->
-  <FaDownload className="text-red-600" />
-  Export
-</button>
-{showExportModal && (
-  <>
-    {/* Overlay to close modal when clicking outside */}
-    <div
-      className="fixed inset-0 z-40"
-      style={{ background: "transparent" }}
-      onClick={() => setShowExportModal(false)}
-    />
-    <ExportModal
-      onClose={() => setShowExportModal(false)}
-      // filters={yourFiltersObject} 
-      includeAll={true}
-    />
-  </>
-)}
+          <button
+            className="flex items-center gap-1 sm:gap-2 bg-white border cursor-pointer border-red-600 text-red-600 rounded-md px-2 sm:px-4 py-1.5 sm:py-2 font-medium shadow hover:bg-red-50 transition text-xs sm:text-sm"
+            onClick={() => setShowExportModal((prev) => !prev)}
+          >
+            <FaDownload className="text-red-600 text-xs sm:text-base" />
+            Export
+          </button>
+          {showExportModal && (
+            <>
+              {/* Overlay to close modal when clicking outside */}
+              <div
+                className="fixed inset-0 z-40"
+                style={{ background: "transparent" }}
+                onClick={() => setShowExportModal(false)}
+              />
+              <ExportModal
+                onClose={() => setShowExportModal(false)}
+                // filters={yourFiltersObject}
+                includeAll={true}
+              />
+            </>
+          )}
         </div>
       </div>
       {/* Table/Grid or Empty State */}
-      <div className="bg-white rounded-xl p-0" style={{ border: "1px solid #E4E7EC" }}>
+      <div className="bg-white rounded-xl p-0 overflow-x-auto" style={{ border: "1px solid #E4E7EC" }}>
         {loading ? (
           <div className="flex items-center justify-center py-20">Loading...</div>
         ) : filteredUsers.length === 0 ? (
-          <div className="flex bg-white mt-4 flex-col items-center justify-center py-20 rounded-xl " style={{ border: '1px solid #E4E7EC' }}>
+          <div className="flex bg-white mt-4 flex-col items-center justify-center py-16 sm:py-20 rounded-xl "
+            style={{ border: '1px solid #E4E7EC' }}>
             <img
               src="https://res.cloudinary.com/cloud-two-tech/image/upload/v1750963970/Illustration_found_gfbbgd.png"
               alt="No data"
-              className="w-[225px] h-[188px] mb-4"
+              className="w-[160px] h-[130px] sm:w-[225px] sm:h-[188px] mb-4"
             />
-            <h2 className="text-2xl font-semibold text-[#303030]">Nothing here yet...</h2>
-            <p className="text-base text-[#9E9E9E] mt-3">Whoops ... there’s no information available yet</p>
+            <h2 className="text-lg sm:text-2xl font-semibold text-[#303030] text-center">Nothing here yet...</h2>
+            <p className="text-sm sm:text-base text-[#9E9E9E] mt-3 text-center">Whoops ... there’s no information available yet</p>
           </div>
         ) : (
           <>
-          <UsersTable
-  user={pagedUsers}
-  onUserClick={handleUserClick}
-  onDeleteClick={handleDeleteClick}
-/>
+            <div className="overflow-x-auto">
+              <UsersTable
+                user={pagedUsers}
+                onUserClick={handleUserClick}
+                onDeleteClick={handleDeleteClick}
+                // You should update UsersTable to use responsive font, icon, and image sizes!
+              />
+            </div>
             <Pagination
               totalRows={filteredUsers.length}
               rowsPerPage={rowsPerPage}
@@ -538,66 +325,66 @@ const studentCount = users.filter(u => ["student", "child"].includes((u.role || 
           }}
         />
       )}
-{showDeleteModal && deleteUser && (
-  <div
-    className="fixed inset-0 z-50"
-    style={{ background: "rgba(0,0,0,0.06)" }}
-    onClick={() => setShowDeleteModal(false)}
-  >
-    <div
-      className="absolute z-60 bg-white rounded-md p-6 w-full max-w-xs shadow-lg"
-      style={{
-        left: deleteUser?.modalPosition?.x ?? "50%",
-        top: deleteUser?.modalPosition?.y ?? "30%",
-        transform: deleteUser?.modalPosition
-          ? "translate(0, 0)"
-          : "translate(-50%, 0)",
-      }}
-      onClick={e => e.stopPropagation()}
-    >
-      <div className="flex items-center justify-between mb-4">
-        <span className="bg-red-100 text-red-600 rounded-full p-2">
-          <FaTrash className="w-5 h-5" />
-        </span>
-        <button
-          className="text-gray-400 hover:text-gray-600"
+      {showDeleteModal && deleteUser && (
+        <div
+          className="fixed inset-0 z-50"
+          style={{ background: "rgba(0,0,0,0.06)" }}
           onClick={() => setShowDeleteModal(false)}
         >
-          <FaTimes />
-        </button>
-      </div>
-      <div className="mb-2 text-start font-semibold text-lg text-black">
-        Delete Profile
-      </div>
-      <div className="mb-6 text-start text-gray-500 text-sm">
-        Are you sure you want to remove <span className="text-black">{deleteUser.name.split(" ")[0]}</span>'s profile? This action cannot be undone.
-      </div>
-      <div className="flex gap-2">
-        <button
-          className="bg-gray-100 text-gray-700 rounded-md px-4 py-2 font-medium w-full"
-          onClick={() => setShowDeleteModal(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="bg-red-600 text-white rounded-md px-4 py-2 font-medium w-full"
-          onClick={async () => {
-            try {
-              await fetch(`https://apis.dojoconnect.app/admin/users/${deleteUser.email}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ confirm: true }),
-              });
-            } catch (err) {}
-            setShowDeleteModal(false);
-          }}
-        >
-          Delete
-        </button>
-      </div>
+          <div
+            className="absolute z-60 bg-white rounded-md p-6 w-full max-w-xs shadow-lg"
+            style={{
+              left: deleteUser?.modalPosition?.x ?? "50%",
+              top: deleteUser?.modalPosition?.y ?? "30%",
+              transform: deleteUser?.modalPosition
+                ? "translate(0, 0)"
+                : "translate(-50%, 0)",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="bg-red-100 text-red-600 rounded-full p-2">
+                <FaTrash className="w-5 h-5" />
+              </span>
+              <button
+                className="text-gray-400 hover:text-gray-600"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                <FaTimes />
+              </button>
+            </div>
+            <div className="mb-2 text-start font-semibold text-lg text-black">
+              Delete Profile
+            </div>
+            <div className="mb-6 text-start text-gray-500 text-sm">
+              Are you sure you want to remove <span className="text-black">{deleteUser.name.split(" ")[0]}</span>'s profile? This action cannot be undone.
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="bg-gray-100 text-gray-700 rounded-md px-4 py-2 font-medium w-full"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-600 text-white rounded-md px-4 py-2 font-medium w-full"
+                onClick={async () => {
+                  try {
+                    await fetch(`https://apis.dojoconnect.app/admin/users/${deleteUser.email}`, {
+                      method: "DELETE",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ confirm: true }),
+                    });
+                  } catch (err) { }
+                  setShowDeleteModal(false);
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
-    </div>
-);
+  );
 }

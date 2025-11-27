@@ -104,7 +104,6 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
   const [showExport, setShowExport] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("");
-  // You can get classId from students or pass as prop if needed
 
   // Filter students by search and filter
   const filteredStudents = students.filter((student) => {
@@ -117,7 +116,7 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
     return matchesSearch && matchesFilter;
   });
 
-    // Empty state
+  // Empty state
   if (!students || students.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
@@ -134,8 +133,8 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
             </linearGradient>
           </defs>
         </svg>
-        <div className="mt-6 text-black font-semibold text-lg">No Student Enrolled</div>
-        <div className="mt-2 text-gray-500 text-sm">No child has been added to this class.</div>
+        <div className="mt-4 sm:mt-6 text-black font-semibold text-base sm:text-lg">No Student Enrolled</div>
+        <div className="mt-2 text-gray-500 text-xs sm:text-sm">No child has been added to this class.</div>
       </div>
     );
   }
@@ -143,10 +142,10 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
   return (
     <div>
       {/* Search, Filter, Export Bar */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6" style={{ position: "relative" }}>
-        <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6" style={{ position: "relative" }}>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Search */}
-          <div className="flex items-center border border-gray-200 rounded-md px-3 py-2 bg-white">
+          <div className="flex items-center border border-gray-200 rounded-md px-2 py-1.5 sm:px-3 sm:py-2 bg-white w-full sm:w-auto">
             <span className="text-gray-400 mr-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" />
@@ -156,13 +155,13 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
             <input
               type="text"
               placeholder="Search"
-              className="outline-none bg-transparent text-sm"
+              className="outline-none bg-transparent text-xs sm:text-sm w-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           {/* Filter */}
-          <div className="flex items-center border border-gray-200 rounded-md px-3 py-2 bg-white">
+          <div className="flex items-center border border-gray-200 rounded-md px-2 py-1.5 sm:px-3 sm:py-2 bg-white w-full sm:w-auto">
             <span className="text-gray-400 mr-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <path d="M3 4a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v2a1 1 0 0 1-.293.707l-6.414 6.414A1 1 0 0 0 14 14.414V19a1 1 0 0 1-1.447.894l-4-2A1 1 0 0 1 8 17V14.414a1 1 0 0 0-.293-.707L1.293 6.707A1 1 0 0 1 1 6V4z" />
@@ -171,7 +170,7 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
             <input
               type="text"
               placeholder="Filter by status"
-              className="outline-none bg-transparent text-sm"
+              className="outline-none bg-transparent text-xs sm:text-sm w-full"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
@@ -180,7 +179,7 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
         {/* Export Button */}
         <div style={{ position: "relative" }}>
           <button
-            className="flex items-center gap-2 bg-red-600 text-white rounded-md px-4 py-2 font-medium shadow hover:bg-red-700 transition"
+            className="flex items-center gap-2 bg-red-600 text-white rounded-md px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium shadow hover:bg-red-700 transition w-full sm:w-auto justify-center"
             onClick={() => setShowExport((v) => !v)}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -194,38 +193,38 @@ export default function EnrolledStudentsTable({ students, classId }: { students:
         </div>
       </div>
       {/* Table */}
-      <div className="rounded-lg border bg-white">
-        <table className="min-w-full divide-y divide-gray-200">
+      <div className="rounded-lg border bg-white overflow-x-auto">
+        <table className="min-w-[700px] w-full text-xs sm:text-sm divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-3"><input type="checkbox" /></th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">Email</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">Enrolled Date</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">Last Activity</th>
-              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500">Status</th>
-              <th className="px-4 py-3"></th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3"><input type="checkbox" /></th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-500">Name</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-500">Email</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-500">Enrolled Date</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-500">Last Activity</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3 text-left font-semibold text-gray-500">Status</th>
+              <th className="px-2 sm:px-4 py-2 sm:py-3"></th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-100">
             {filteredStudents.map((student) => (
               <tr key={student.id} className="hover:bg-gray-50 cursor-pointer">
-                <td className="px-4 py-3"><input type="checkbox" /></td>
-                <td className="flex items-center gap-2 px-4 py-3">
-                  <img src={student.avatar} alt={student.name} className="w-8 h-8 rounded-full object-cover" />
-                  {student.name}
+                <td className="px-2 sm:px-4 py-2 sm:py-3"><input type="checkbox" /></td>
+                <td className="flex items-center gap-2 px-2 sm:px-4 py-2 sm:py-3">
+                  <img src={student.avatar} alt={student.name} className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover" />
+                  <span className="text-xs sm:text-sm">{student.name}</span>
                 </td>
-                <td className="px-4 py-3">{student.email}</td>
-                <td className="px-4 py-3">{student.enrolledDate}</td>
-                <td className="px-4 py-3">{student.lastActivity}</td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-600">
+                <td className="px-2 sm:px-4 py-2 sm:py-3">{student.email}</td>
+                <td className="px-2 sm:px-4 py-2 sm:py-3">{student.enrolledDate}</td>
+                <td className="px-2 sm:px-4 py-2 sm:py-3">{student.lastActivity}</td>
+                <td className="px-2 sm:px-4 py-2 sm:py-3">
+                  <span className="px-2 py-1 rounded text-[11px] sm:text-xs font-semibold bg-green-100 text-green-600">
                     {student.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-right">
+                <td className="px-2 sm:px-4 py-2 sm:py-3 text-right">
                   <span className="bg-white border border-gray-200 rounded p-1">
-                    <FaEllipsisV className="text-gray-400 inline" />
+                    <FaEllipsisV className="text-gray-400 inline text-xs sm:text-base" />
                   </span>
                 </td>
               </tr>

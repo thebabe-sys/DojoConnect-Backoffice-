@@ -78,7 +78,7 @@ export default function ClassDetailPage() {
 
   return (
     <MainLayout>
-      <div className="p-6">
+      <div className="p-3 sm:p-6">
         <ProfileHeader
           profile={{
             className: profile.class_name,
@@ -102,16 +102,19 @@ export default function ClassDetailPage() {
           onBack={() => router.push('/dashboard?tab=classes')}
         />
 
-       <ProfileTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} 
+        <ProfileTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
 
-        <div className="mt-8">
+        <div className="mt-4 sm:mt-8 text-xs sm:text-sm">
           {activeTab === "Class Info" && <ClassOverview profile={profile} />}
           {activeTab === "Enrolled Student" && (
             <>
-              <EnrolledStudentsTable students={profile.enrolled_students} 
-              classId={id}
-              />
+              <div className="overflow-x-auto">
+                <EnrolledStudentsTable students={profile.enrolled_students} classId={id} />
+              </div>
               <Pagination
                 totalRows={profile.enrolled_students?.length || 0}
                 rowsPerPage={rowsPerPage}
@@ -121,11 +124,15 @@ export default function ClassDetailPage() {
             </>
           )}
           {activeTab === "Class Schedule" && (
-            <ClassScheduleCalendar schedule={transformScheduleToCalendar(profile.class_schedule)} />
+            <div className="overflow-x-auto">
+              <ClassScheduleCalendar schedule={transformScheduleToCalendar(profile.class_schedule)} />
+            </div>
           )}
           {activeTab === "Attendance" && (
             <>
-              <AttendanceTab attendance={profile.attendance_summary} rows={profile.attendance_rows} />
+              <div className="overflow-x-auto">
+                <AttendanceTab attendance={profile.attendance_summary} rows={profile.attendance_rows} />
+              </div>
               <Pagination
                 totalRows={profile.attendance_rows?.length || 0}
                 rowsPerPage={rowsPerPage}
@@ -134,44 +141,45 @@ export default function ClassDetailPage() {
               />
             </>
           )}
-        {activeTab === "Subscription" && (
-                  <>
-                    {(!profile.subscription_history || profile.subscription_history.length === 0) ? (
-                      <div className="flex flex-col items-center justify-center py-16 bg-white rounded-lg border">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" fill="none"><path fill="url(#a)" d="M75 150c41.421 0 75-33.579 75-75S116.421 0 75 0 0 33.579 0 75s33.579 75 75 75Z"/><path fill="#fff" d="M120 150H30V53a16.018 16.018 0 0 0 16-16h58a15.906 15.906 0 0 0 4.691 11.308A15.89 15.89 0 0 0 120 53v97Z"/><path fill="#E51B1B" d="M75 102c13.255 0 24-10.745 24-24S88.255 54 75 54 51 64.745 51 78s10.745 24 24 24Z"/><path fill="#fff" d="M83.485 89.314 75 80.829l-8.485 8.485-2.829-2.829L72.172 78l-8.486-8.485 2.829-2.829L75 75.172l8.485-8.486 2.829 2.829L77.828 78l8.486 8.485-2.829 2.829Z"/><path fill="#FCDEDE" d="M88 108H62a3 3 0 1 0 0 6h26a3 3 0 1 0 0-6ZM97 120H53a3 3 0 1 0 0 6h44a3 3 0 1 0 0-6Z"/><defs><linearGradient id="a" x1="75" x2="75" y1="0" y2="150" gradientUnits="userSpaceOnUse"><stop stopColor="#FCEDED"/><stop offset="1" stopColor="#FCDEDE"/></linearGradient></defs></svg>
-                        <div className="mt-6 text-black font-semibold text-lg">No Subscription History</div>
-                        <div className="mt-2 text-gray-500 text-sm">No subscription or billing records found for this user.</div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <SubscriptionTab subscription={profile.subscription_status} billing={profile.subscription_history || []} />
-                        </div>
-                        <div className="mt-8">
-                          <div className="flex items-center justify-between bg-gray-100 px-4 py-3 rounded-md mb-2">
-                            <span className="font-semibold text-gray-700 text-lg">Billing history</span>
-                            <button className="flex items-center bg-red-500 text-white px-4 py-2 rounded-md cursor-pointer hover:bg-red-600">
-                              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4m-8 8h12"/>
-                              </svg>
-                              Export
-                            </button>
-                          </div>
-                          <div className="mt-4">
-                            <SubscriptionTab 
-                              subscription={profile.subscription_status} 
-                              billing={profile.subscription_history || []} 
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
+          {activeTab === "Subscription" && (
+            <>
+              {(!profile.subscription_history || profile.subscription_history.length === 0) ? (
+                <div className="flex flex-col items-center justify-center py-10 sm:py-16 bg-white rounded-lg border">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="none" className="sm:w-[150px] sm:h-[150px]"><path fill="url(#a)" d="M75 150c41.421 0 75-33.579 75-75S116.421 0 75 0 0 33.579 0 75s33.579 75 75 75Z"/><path fill="#fff" d="M120 150H30V53a16.018 16.018 0 0 0 16-16h58a15.906 15.906 0 0 0 4.691 11.308A15.89 15.89 0 0 0 120 53v97Z"/><path fill="#E51B1B" d="M75 102c13.255 0 24-10.745 24-24S88.255 54 75 54 51 64.745 51 78s10.745 24 24 24Z"/><path fill="#fff" d="M83.485 89.314 75 80.829l-8.485 8.485-2.829-2.829L72.172 78l-8.486-8.485 2.829-2.829L75 75.172l8.485-8.486 2.829 2.829L77.828 78l8.486 8.485-2.829 2.829Z"/><path fill="#FCDEDE" d="M88 108H62a3 3 0 1 0 0 6h26a3 3 0 1 0 0-6ZM97 120H53a3 3 0 1 0 0 6h44a3 3 0 1 0 0-6Z"/><defs><linearGradient id="a" x1="75" x2="75" y1="0" y2="150" gradientUnits="userSpaceOnUse"><stop stopColor="#FCEDED"/><stop offset="1" stopColor="#FCDEDE"/></linearGradient></defs></svg>
+                  <div className="mt-4 sm:mt-6 text-black font-semibold text-base sm:text-lg">No Subscription History</div>
+                  <div className="mt-2 text-gray-500 text-xs sm:text-sm text-center">No subscription or billing records found for this user.</div>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+                    <SubscriptionTab subscription={profile.subscription_status} billing={profile.subscription_history || []} />
+                  </div>
+                  <div className="mt-6 sm:mt-8">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-100 px-3 sm:px-4 py-2 sm:py-3 rounded-md mb-2 gap-2">
+                      <span className="font-semibold text-gray-700 text-base sm:text-lg">Billing history</span>
+                      <button className="flex items-center bg-red-500 text-white px-3 sm:px-4 py-2 rounded-md cursor-pointer hover:bg-red-600 text-xs sm:text-base">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v12m0 0l-4-4m4 4l4-4m-8 8h12"/>
+                        </svg>
+                        Export
+                      </button>
+                    </div>
+                    <div className="mt-4 overflow-x-auto">
+                      <SubscriptionTab
+                        subscription={profile.subscription_status}
+                        billing={profile.subscription_history || []}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
           {activeTab === "Activities" && (
             <>
-              <SearchActionBar />
-              <ActivitiesTable activities={profile.recent_activities} />
+              <div className="overflow-x-auto">
+                <ActivitiesTable activities={profile.recent_activities} />
+              </div>
               <Pagination
                 totalRows={profile.recent_activities?.length || 0}
                 rowsPerPage={rowsPerPage}
